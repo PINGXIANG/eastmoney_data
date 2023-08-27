@@ -13,7 +13,7 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 # DEFAULT DATE STRING
 LAST_WEEK = (datetime.today() - timedelta(days=7)).strftime('%Y%m%d')
 LAST_YEAR = (datetime.today() - timedelta(days=365)).strftime('%Y%m%d')
-LAST_2YEARS = (datetime.today() - timedelta(days=365*2)).strftime('%Y%m%d')
+LAST_3YEARS = (datetime.today() - timedelta(days=365 * 3)).strftime('%Y%m%d')
 TODAY = datetime.today().strftime('%Y%m%d')
 
 
@@ -64,7 +64,7 @@ if checkpoint:
 
 for stock_code in stock_code_lst:
     try:
-        data = ak.stock_zh_a_hist(symbol=str(stock_code), period="daily", start_date=LAST_2YEARS, end_date=TODAY, adjust="qfq")
+        data = ak.stock_zh_a_hist(symbol=str(stock_code), period="daily", start_date=LAST_3YEARS, end_date=TODAY, adjust="qfq")
         data['stockCode'] = str(stock_code)
         data.to_csv(f"{priceDirPath+str(stock_code)}.csv")
         print(str(stock_code), "Done.")

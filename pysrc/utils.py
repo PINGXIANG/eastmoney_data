@@ -5,7 +5,7 @@ def feature_engineering(data: pd.DataFrame):
     # Convert 'date' column to datetime if not already. Sort the data by 'sector' and 'date'
     data['date'] = pd.to_datetime(data['date'])
     data.sort_values(by=['sector', 'date'], inplace=True)
-
+    data
     # Create lagged features
     lag_periods = [1, 5, 10]  # Number of lag periods
     for lag in lag_periods:
@@ -57,3 +57,19 @@ def feature_engineering(data: pd.DataFrame):
     data.dropna(inplace=True)
 
     return data
+
+
+def summary(df):
+    print(f'data shape: {df.shape}')
+    summ = pd.DataFrame(df.dtypes, columns=['data type'])
+    summ['#missing'] = df.isnull().sum().values
+    summ['%missing'] = df.isnull().sum().values / len(df) * 100
+    summ['#unique'] = df.nunique().values
+    desc = pd.DataFrame(df.describe(include='all').transpose())
+    summ['min'] = desc['min'].values
+    summ['max'] = desc['max'].values
+    summ['first value'] = df.loc[0].values
+    summ['second value'] = df.loc[1].values
+    summ['third value'] = df.loc[2].values
+
+    return summ
