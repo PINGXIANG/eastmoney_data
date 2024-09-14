@@ -5,7 +5,7 @@ def feature_engineering(data: pd.DataFrame):
     # Convert 'date' column to datetime if not already. Sort the data by 'sector' and 'date'
     data['date'] = pd.to_datetime(data['date'])
     data.sort_values(by=['sector', 'date'], inplace=True)
-    data
+    
     # Create lagged features
     lag_periods = [1, 5, 10]  # Number of lag periods
     for lag in lag_periods:

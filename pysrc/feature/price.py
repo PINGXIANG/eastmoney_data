@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import os
 from datetime import datetime, timedelta
+from pysrc import gendata
 import warnings
 
 root_path = "D:\\Documents\\PycharmProject\\eastmoney_data"
@@ -19,7 +20,8 @@ date = max(data_date_lst).strftime('%Y-%m-%d')
 tag_df = pd.read_csv(tagDirPath + date + ".csv")
 
 tag_df["stockCode"] = tag_df['stockCode'].astype("str").apply(lambda x: x.zfill(6)).to_list()
-tag_df = tag_df[~tag_df['sector'].isin(["央视50_", "AH股", "分拆预期", "破净股", "证金持股", "上证50_", "HS300_", "上证180_", "中证500", "深成500", "深证100R", "标准普尔"])]
+tag_df = tag_df[~tag_df['sector'].isin(
+    ["央视50_", "AH股", "分拆预期", "破净股", "证金持股", "上证50_", "HS300_", "上证180_", "中证500", "深成500", "深证100R", "标准普尔"])]
 tag_df.drop(['date'], axis=1, inplace=True)
 
 saving = True
@@ -52,17 +54,20 @@ price_df['流通股数'] = price_df['成交量'] * price_df['换手率']
 
 price_df = pd.merge(tag_df, price_df, how='outer', on='stockCode')
 
-price_df = price_df.rename(columns={"开盘":'open','收盘':'close','成交量':'volume','成交额':'turnover',"最高":'high',"最低":'low','流通股数':'outstanding'})
+price_df = price_df.rename(
+    columns={"stockCode": 'stockCodeNum', "开盘": 'open', '收盘': 'close', '成交量': 'volume', '成交额': 'turnover', "最高": 'high',
+             "最低": 'low', '流通股数': 'outstanding'})
 print("aggregating by date,sector")
-price_df = price_df.groupby(['date','sector']).agg({
-        'close': lambda x: x.mean(),
-        'open': lambda x: x.mean(),
-        'high': lambda x: x.mean(),
-        'low': lambda x: x.mean(),
-        'volume': lambda x: sum(x),
-        'turnover': lambda x: sum(x),
-        'outstanding': lambda x: sum(x)
-    })
+price_df = price_df.groupby(['date', 'sector']).agg({
+    'stockCodeNum': lambda x: len(set(x)),
+    'close': lambda x: sum(x),
+    'open': lambda x: sum(x),
+    'high': lambda x: sum(x),
+    'low': lambda x: sum(x),
+    'volume': lambda x: sum(x),
+    'turnover': lambda x: sum(x),
+    'outstanding': lambda x: sum(x)
+})
 
 if saving:
     print("saving")
