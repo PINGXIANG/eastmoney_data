@@ -1,11 +1,28 @@
 import pandas as pd
+import os
+from datetime import datetime, timedelta
+
+
+# =============== utils ===============
+def getLatestDateDir(path, __format: str = '%Y-%m-%d'):
+    data_date_lst = []
+    for filename in os.listdir(path):
+        if os.path.isdir(path + filename):
+            data_date_lst.append(datetime.strptime(filename, __format).date())
+    date = max(data_date_lst).strftime('%Y-%m-%d')
+    return date
+
+
+def getLatestDateDirPath(path, __format: str = '%Y-%m-%d'):
+    date = getLatestDateDir(path, __format)
+    return path + date + "/"
 
 
 def feature_engineering(data: pd.DataFrame):
     # Convert 'date' column to datetime if not already. Sort the data by 'sector' and 'date'
     data['date'] = pd.to_datetime(data['date'])
     data.sort_values(by=['sector', 'date'], inplace=True)
-    
+
     # Create lagged features
     lag_periods = [1, 5, 10]  # Number of lag periods
     for lag in lag_periods:
